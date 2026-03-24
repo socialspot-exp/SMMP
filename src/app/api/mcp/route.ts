@@ -1,37 +1,56 @@
 import { createMcpHandler } from 'mcp-handler'
 import { z } from 'zod'
 
-const handler = createMcpHandler({
-  name: 'smmp-vercel-mcp',
-  version: '1.0.0',
-  tools: [
-    {
-      name: 'get_deployment_info',
-      description: 'Get information about Vercel deployments',
-      inputSchema: z.object({
-        projectName: z.string().optional(),
-      }),
-      handler: async ({ projectName }) => {
-        return {
-          message: 'This is a placeholder tool. Implement your Vercel API logic here.',
-          projectName: projectName || 'default',
-        }
+const handler = createMcpHandler(
+  (server) => {
+    server.registerTool(
+      'get_deployment_info',
+      {
+        title: 'Get Deployment Info',
+        description: 'Get information about Vercel deployments',
+        inputSchema: {
+          projectName: z.string().optional(),
+        },
       },
-    },
-    {
-      name: 'query_database',
-      description: 'Query Supabase database',
-      inputSchema: z.object({
-        query: z.string(),
-      }),
-      handler: async ({ query }) => {
+      async ({ projectName }) => {
         return {
-          message: 'This is a placeholder tool. Implement your Supabase query logic here.',
-          query,
+          content: [
+            {
+              type: 'text',
+              text: `Deployment info for project: ${projectName || 'default'}. Implement your Vercel API logic here.`,
+            },
+          ],
         }
+      }
+    )
+
+    server.registerTool(
+      'query_database',
+      {
+        title: 'Query Database',
+        description: 'Query Supabase database',
+        inputSchema: {
+          query: z.string(),
+        },
       },
-    },
-  ],
-})
+      async ({ query }) => {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Query: ${query}. Implement your Supabase query logic here.`,
+            },
+          ],
+        }
+      }
+    )
+  },
+  {},
+  {
+    basePath: '/api',
+    maxDuration: 60,
+    verboseLogs: true,
+  }
+)
 
 export { handler as GET, handler as POST }
