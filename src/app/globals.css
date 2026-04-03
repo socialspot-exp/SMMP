@@ -46,24 +46,79 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Curator Market — global editorial palette + typography (matches homepage / Luminous) */
+  --font-headline: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
+  --radius-xl: 1.5rem;
+
+  --color-outline: #757778;
+  --color-tertiary: #765600;
+  --color-surface-dim: #c5c8cc;
+  --color-surface-container-highest: #dadddf;
+  --color-on-secondary-fixed-variant: #5a5b60;
+  --color-surface-container-high: #e0e3e4;
+  --color-on-tertiary-fixed-variant: #614700;
+  --color-on-error: #ffefec;
+  --color-secondary-fixed-dim: #d4d4d9;
+  --color-inverse-on-surface: #9b9d9e;
+  --color-tertiary-dim: #674b00;
+  --color-primary-fixed-dim: #e87215;
+  --color-on-tertiary: #fff1dc;
+  --color-on-primary-container: #3d1800;
+  --color-error-container: #f95630;
+  --color-secondary-fixed: #e2e2e7;
+  --color-on-secondary-container: #505256;
+  --color-on-surface: #2c2f32;
+  --color-on-primary-fixed: #000000;
+  --color-on-secondary: #f2f2f8;
+  --color-primary-dim: #e87215;
+  --color-inverse-primary: #ef771b;
+  --color-on-tertiary-fixed: #3d2b00;
+  --color-on-primary: #3d1800;
+  --color-surface-container: #e6e8ea;
+  --color-surface-container-lowest: #ffffff;
+  --color-inverse-surface: #0c0f10;
+  --color-tertiary-fixed: #fdc02a;
+  --color-secondary-container: #e2e2e7;
+  --color-error: #b02500;
+  --color-secondary-dim: #4e4f54;
+  --color-primary-container: #f97f24;
+  --color-primary-fixed: #f97f24;
+  --color-on-background: #2c2f32;
+  --color-surface-tint: #954400;
+  --color-surface-bright: #f5f6f7;
+  --color-surface: #f5f6f7;
+  --color-on-error-container: #520c00;
+  --color-tertiary-fixed-dim: #edb218;
+  --color-on-primary-fixed-variant: #4c1f00;
+  --color-outline-variant: #abadae;
+  --color-on-surface-variant: #595c5f;
+  --color-error-dim: #b92902;
+  --color-surface-variant: #dadddf;
+  --color-surface-container-low: #eff1f2;
+  --color-on-secondary-fixed: #3d3f44;
+  --color-tertiary-container: #fdc02a;
+  --color-on-tertiary-container: #563e00;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --background: #f5f6f7;
+  --foreground: #2c2f32;
+  --card: #ffffff;
+  --card-foreground: #2c2f32;
+  --popover: #ffffff;
+  --popover-foreground: #2c2f32;
+  --primary: #f97f24;
+  --primary-foreground: #3d1800;
+  --secondary: #5a5b60;
+  --secondary-foreground: #f2f2f8;
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #b31b25;
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -117,6 +172,28 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* SMM product marketing blocks (matches reference “ambient” cards) */
+.ambient-shadow {
+  box-shadow: 0 40px 40px -10px rgba(44, 47, 50, 0.06);
+}
+
+.ghost-border {
+  border: 1px solid rgba(171, 173, 177, 0.15);
+}
+
+.glass-effect {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -126,5 +203,6 @@
   }
   html {
     @apply font-sans;
+    --font-sans: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
   }
 }

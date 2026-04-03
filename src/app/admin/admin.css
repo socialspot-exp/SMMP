@@ -1,0 +1,13 @@
+details[open] summary .expand-icon {
+  transform: rotate(180deg);
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-glass-nav {
+  background: rgba(245, 246, 250, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
