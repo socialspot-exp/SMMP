@@ -4,6 +4,13 @@ import { createSupabaseAdmin } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
+function userDisplayStatus(rawStatus: string, credentialsState: string): string {
+  if (credentialsState === "sent" && /await|provision|pending/i.test(rawStatus)) {
+    return "Credentials received";
+  }
+  return rawStatus;
+}
+
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,6 +45,7 @@ export async function GET() {
   }
 
   const orderList = (orders ?? []).map((row: any) => ({
+    // Keep DB status untouched; send user-facing wording when credentials are already available.
     id: String(row.id),
     orderRef: String(row.order_ref),
     productName: String(row.product_name),
@@ -46,7 +54,7 @@ export async function GET() {
     price: row.price != null ? String(row.price) : null,
     submittedForm:
       row.submitted_form && typeof row.submitted_form === "object" ? (row.submitted_form as Record<string, unknown>) : {},
-    status: String(row.status),
+    status: userDisplayStatus(String(row.status), String(row.credentials_state)),
     detail: row.detail != null ? String(row.detail) : null,
     credentialsState: String(row.credentials_state) as "pending" | "sent" | "failed",
     credentialsProvidedAt: row.credentials_provided_at ?? null,

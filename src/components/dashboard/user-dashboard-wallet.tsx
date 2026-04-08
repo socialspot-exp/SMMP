@@ -71,16 +71,7 @@ export function UserDashboardWallet() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 p-4 md:space-y-8 md:p-0">
-      <div>
-        <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface md:text-4xl">
-          Wallet
-        </h1>
-        <p className="mt-1 text-sm font-medium text-on-surface-variant">
-          Manage your balance and view transaction history
-        </p>
-      </div>
-
+    <div className="mx-auto w-full max-w-6xl space-y-4 p-4 md:space-y-6 md:p-0">
       {loadError ? (
         <div
           className="rounded-xl border border-error/30 bg-error-container/20 px-4 py-3 text-sm text-on-error-container"

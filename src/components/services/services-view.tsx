@@ -129,15 +129,17 @@ type ChipProps = {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  compact?: boolean;
 };
 
-function Chip({ active, onClick, children }: ChipProps) {
+function Chip({ active, onClick, children, compact = false }: ChipProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+        "rounded-full border text-xs font-semibold transition-colors",
+        compact ? "px-2.5 py-1 text-[11px]" : "px-3 py-1.5",
         active
           ? "border-primary bg-primary/10 text-primary"
           : "border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant hover:border-outline-variant/50"
@@ -214,8 +216,8 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
   }, []);
 
   const [smmCatalogPlatforms, setSmmCatalogPlatforms] = useState<SmmPlatformDTO[]>([]);
-  const [smmServices, setSmmServices] = useState<SMMService[]>(SMM_SERVICES);
-  const [premServices, setPremServices] = useState<PremiumService[]>(PREMIUM_SERVICES);
+  const [smmServices, setSmmServices] = useState<SMMService[]>([]);
+  const [premServices, setPremServices] = useState<PremiumService[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -223,8 +225,8 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
       .then((r) => r.json())
       .then((data: { products?: PremiumService[] }) => {
         if (cancelled) return;
-        if (Array.isArray(data.products) && data.products.length > 0) {
-          setPremServices(data.products);
+        if (Array.isArray(data.products)) {
+          setPremServices(data.products.filter((p) => p.isActive !== false));
         }
       })
       .catch(() => {});
@@ -239,8 +241,8 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
       .then((r) => r.json())
       .then((data: { products?: SMMService[] }) => {
         if (cancelled) return;
-        if (Array.isArray(data.products) && data.products.length > 0) {
-          setSmmServices(data.products);
+        if (Array.isArray(data.products)) {
+          setSmmServices(data.products.filter((p) => p.isActive !== false));
         }
       })
       .catch(() => {});
@@ -355,6 +357,47 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
     [premServices, premQ, premCategories, premSubcategory, premPriceMin, premPriceMax]
   );
   const premSorted = useMemo(() => sortPremium(premFiltered, premSort), [premFiltered, premSort]);
+
+  const smmPriceRangeValue = useMemo(() => {
+    const min = smmPriceMin.trim();
+    const max = smmPriceMax.trim();
+    if (!min && !max) return "all";
+    if (min === "0" && max === "5") return "0-5";
+    if (min === "5" && max === "10") return "5-10";
+    if (min === "10" && max === "25") return "10-25";
+    if (min === "25" && max === "50") return "25-50";
+    if (min === "50" && !max) return "50+";
+    return "all";
+  }, [smmPriceMin, smmPriceMax]);
+
+  const setSmmPriceRange = (range: string) => {
+    switch (range) {
+      case "0-5":
+        setSmmPriceMin("0");
+        setSmmPriceMax("5");
+        break;
+      case "5-10":
+        setSmmPriceMin("5");
+        setSmmPriceMax("10");
+        break;
+      case "10-25":
+        setSmmPriceMin("10");
+        setSmmPriceMax("25");
+        break;
+      case "25-50":
+        setSmmPriceMin("25");
+        setSmmPriceMax("50");
+        break;
+      case "50+":
+        setSmmPriceMin("50");
+        setSmmPriceMax("");
+        break;
+      default:
+        setSmmPriceMin("");
+        setSmmPriceMax("");
+        break;
+    }
+  };
   const premFeatured = useMemo(
     () => premFiltered.filter((s) => s.featured).slice(0, 4),
     [premFiltered]
@@ -403,25 +446,10 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
     <div
       className={cn(
         "mx-auto max-w-7xl",
-        isDashboard ? "px-4 pb-10 pt-2 md:px-0 md:py-4" : "px-6 py-10"
+        isDashboard ? "px-4 pb-10 pt-0 md:px-0 md:py-3" : "px-6 py-10"
       )}
     >
-        {isDashboard ? (
-          <div className="mb-8 max-w-2xl">
-            <p className="mb-2 text-xs font-bold tracking-widest text-primary uppercase">
-              Your marketplace
-            </p>
-            <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface md:text-4xl">
-              Services
-            </h1>
-            <p className="mt-3 text-on-surface-variant">
-              Order SMM boosts or premium accounts — same catalog as the public site, with filters
-              for each type.
-            </p>
-          </div>
-        ) : null}
-
-        <div className={cn("mb-12 flex flex-wrap gap-2", isDashboard && "mb-8")}>
+        <div className={cn("mb-12 flex flex-wrap gap-2", isDashboard && "mb-4")}>
           <a
             href="#smm-services"
             className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary"
@@ -509,10 +537,10 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
             </div>
           </div>
 
-          <div className="mb-8 grid gap-6 lg:grid-cols-[260px_1fr]">
+          <div className="mb-8 space-y-6">
             <aside
               className={cn(
-                "space-y-6 rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5",
+                "space-y-6 rounded-2xl border border-outline-variant/25 bg-surface-container shadow-[0_10px_24px_-16px_rgba(0,0,0,0.45)] p-5",
                 smmFiltersOpen ? "block" : "hidden lg:block"
               )}
             >
@@ -531,11 +559,12 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
                   Platform
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {smmPlatformChips.map((p) => (
+                  {smmPlatformChips.map((p, i) => (
                     <Chip
                       key={p.id}
                       active={smmPlatforms.has(p.id)}
                       onClick={() => toggleSmmPlatform(p.id)}
+                      compact={i >= smmPlatformChips.length - 3}
                     >
                       <span className="flex items-center gap-1.5">
                         <SocialBrandIcon id={p.iconKey} className="size-3.5" />
@@ -545,61 +574,57 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
                   ))}
                 </div>
               </div>
-              <div>
-                <p className="mb-2 text-xs font-bold tracking-wide text-on-surface-variant uppercase">
-                  Subcategory
-                </p>
-                <select
-                  value={smmCategory}
-                  onChange={(e) => setSmmCategory(e.target.value)}
-                  className="w-full rounded-lg border border-outline-variant/25 bg-surface-container-lowest px-3 py-2 text-sm"
-                >
-                  <option value="all">All subcategories</option>
-                  {smmSubcategoryOptions.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <p className="mb-2 text-xs font-bold tracking-wide text-on-surface-variant uppercase">
-                  Delivery
-                </p>
-                <select
-                  value={smmDuration}
-                  onChange={(e) => setSmmDuration(e.target.value)}
-                  className="w-full rounded-lg border border-outline-variant/25 bg-surface-container-lowest px-3 py-2 text-sm"
-                >
-                  <option value="all">Any duration</option>
-                  {SMM_DURATIONS.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <p className="mb-2 text-xs font-bold tracking-wide text-on-surface-variant uppercase">
-                  Price from ($)
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    min={0}
-                    placeholder="Min"
-                    value={smmPriceMin}
-                    onChange={(e) => setSmmPriceMin(e.target.value)}
+              <div className="grid gap-3 md:grid-cols-3">
+                <div>
+                  <p className="mb-2 text-xs font-bold tracking-wide text-on-surface-variant uppercase">
+                    Subcategory
+                  </p>
+                  <select
+                    value={smmCategory}
+                    onChange={(e) => setSmmCategory(e.target.value)}
                     className="w-full rounded-lg border border-outline-variant/25 bg-surface-container-lowest px-3 py-2 text-sm"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    placeholder="Max"
-                    value={smmPriceMax}
-                    onChange={(e) => setSmmPriceMax(e.target.value)}
+                  >
+                    <option value="all">All subcategories</option>
+                    {smmSubcategoryOptions.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs font-bold tracking-wide text-on-surface-variant uppercase">
+                    Delivery
+                  </p>
+                  <select
+                    value={smmDuration}
+                    onChange={(e) => setSmmDuration(e.target.value)}
                     className="w-full rounded-lg border border-outline-variant/25 bg-surface-container-lowest px-3 py-2 text-sm"
-                  />
+                  >
+                    <option value="all">Any duration</option>
+                    {SMM_DURATIONS.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs font-bold tracking-wide text-on-surface-variant uppercase">
+                    Price range ($)
+                  </p>
+                  <select
+                    value={smmPriceRangeValue}
+                    onChange={(e) => setSmmPriceRange(e.target.value)}
+                    className="w-full rounded-lg border border-outline-variant/25 bg-surface-container-lowest px-3 py-2 text-sm"
+                  >
+                    <option value="all">Any price</option>
+                    <option value="0-5">$0 - $5</option>
+                    <option value="5-10">$5 - $10</option>
+                    <option value="10-25">$10 - $25</option>
+                    <option value="25-50">$25 - $50</option>
+                    <option value="50+">$50+</option>
+                  </select>
                 </div>
               </div>
               <Button
@@ -707,10 +732,10 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
             </div>
           </div>
 
-          <div className="mb-8 grid gap-6 lg:grid-cols-[260px_1fr]">
+          <div className="mb-8 space-y-6">
             <aside
               className={cn(
-                "space-y-6 rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5",
+                "space-y-6 rounded-2xl border border-outline-variant/25 bg-surface-container shadow-[0_10px_24px_-16px_rgba(0,0,0,0.45)] p-5",
                 premFiltersOpen ? "block" : "hidden lg:block"
               )}
             >

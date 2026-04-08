@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Package, RefreshCw } from "lucide-react";
+import { CheckCircle2, Loader2, Package, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 
 type SmmOrder = {
   id: string;
@@ -35,6 +36,8 @@ export function UserDashboardOrders() {
   const [error, setError] = useState<string | null>(null);
   const [refreshingId, setRefreshingId] = useState<string | null>(null);
   const [refreshError, setRefreshError] = useState<string | null>(null);
+  const [bulkRefreshing, setBulkRefreshing] = useState(false);
+  const [bulkRefreshSuccess, setBulkRefreshSuccess] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -100,28 +103,73 @@ export function UserDashboardOrders() {
     }
   }
 
-  return (
-    <div className="px-4 pb-8 pt-4 md:px-0 md:pt-2">
-      <div className="mb-6 md:mb-8">
-        <h1 className="mb-2 font-headline text-3xl font-extrabold tracking-tight text-on-surface md:text-4xl">
-          My orders
-        </h1>
-        <p className="text-on-surface-variant">
-          SMM delivery orders only — progress, status, and target links.
-        </p>
-      </div>
+  async function bulkRefresh() {
+    setBulkRefreshing(true);
+    setRefreshError(null);
+    setBulkRefreshSuccess(null);
+    try {
+      const res = await fetch("/api/smm-orders/bulk-refresh-status", {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRefreshError(typeof data?.error === "string" ? data.error : "Failed to bulk refresh");
+        return;
+      }
+      // Reload all orders to get fresh statuses
+      await load();
+      const updated = typeof data?.updated === "number" ? data.updated : 0;
+      setBulkRefreshSuccess(`Updated ${updated} order${updated === 1 ? "" : "s"}`);
+      setTimeout(() => setBulkRefreshSuccess(null), 3000);
+    } catch (e) {
+      setRefreshError(e instanceof Error ? e.message : "Failed to bulk refresh");
+    } finally {
+      setBulkRefreshing(false);
+    }
+  }
 
+  return (
+    <div className="px-4 pb-32 pt-2 md:px-0 md:pt-0 md:pb-8">
       <section className="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
         <div className="border-b border-outline-variant/10 px-4 py-4 md:px-6">
-          <div className="flex items-center gap-2">
-            <Package className="size-4 shrink-0 text-primary" aria-hidden />
-            <h2 className="font-headline text-lg font-bold text-on-surface">SMM orders</h2>
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <Package className="size-4 shrink-0 text-primary" aria-hidden />
+                <h2 className="font-headline text-lg font-bold text-on-surface">SMM orders</h2>
+              </div>
+              <p className="mt-1 text-sm text-on-surface-variant">
+                Followers, likes, views, and other social boosts.
+              </p>
+            </div>
+            {rows.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => void bulkRefresh()}
+                disabled={bulkRefreshing}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-all hover:bg-primary-dim active:scale-95",
+                  bulkRefreshing ? "pointer-events-none opacity-60" : ""
+                )}
+              >
+                {bulkRefreshing ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <RefreshCw className="size-4" aria-hidden />
+                )}
+                {bulkRefreshing ? "Checking..." : "Bulk Status Check"}
+              </button>
+            ) : null}
           </div>
-          <p className="mt-1 text-sm text-on-surface-variant">
-            Followers, likes, views, and other social boosts.
-          </p>
         </div>
         <div className="space-y-3 p-4 md:p-6">
+          {bulkRefreshSuccess ? (
+            <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              <CheckCircle2 className="size-4 shrink-0" aria-hidden />
+              {bulkRefreshSuccess}
+            </div>
+          ) : null}
           {refreshError ? (
             <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
               {refreshError}
@@ -229,6 +277,9 @@ export function UserDashboardOrders() {
       </section>
 
       {/* No details drawer — status refresh happens per-row via reload icon. */}
+      <div className="md:hidden">
+        <MobileBottomNav />
+      </div>
     </div>
   );
 }

@@ -4,8 +4,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Loader2 } from "lucide-react";
+import { Eye, Loader2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { PremiumCatalogIcon, isPremiumCatalogIconKey, type PremiumCatalogIconKey } from "@/lib/premium-catalog-icons";
 
 type CredState = "pending" | "sent" | "failed";
 
@@ -38,6 +40,29 @@ function formatDate(iso: string | null | undefined) {
   if (!iso) return null;
   const d = new Date(iso);
   return d.toLocaleString(undefined, { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+function extractIconFromProductName(productName: string): PremiumCatalogIconKey {
+  const name = productName.toLowerCase();
+  if (name.includes("netflix")) return "Netflix";
+  if (name.includes("spotify")) return "Spotify";
+  if (name.includes("disney")) return "Disney";
+  if (name.includes("hbo") || name.includes("max")) return "Max";
+  if (name.includes("paramount")) return "ParamountPlus";
+  if (name.includes("hulu")) return "Hulu";
+  if (name.includes("youtube")) return "Youtube";
+  if (name.includes("apple tv")) return "AppleTV";
+  if (name.includes("apple music")) return "AppleMusic";
+  if (name.includes("twitch")) return "Twitch";
+  if (name.includes("steam")) return "Steam";
+  if (name.includes("epic")) return "EpicGames";
+  if (name.includes("playstation") || name.includes("ps plus")) return "PlayStation";
+  if (name.includes("xbox")) return "Xbox";
+  if (name.includes("nordvpn")) return "NordVPN";
+  if (name.includes("expressvpn")) return "ExpressVPN";
+  if (name.includes("protonvpn")) return "ProtonVPN";
+  if (name.includes("crunchyroll")) return "Crunchyroll";
+  return "Sparkles";
 }
 
 export function UserDashboardSubscriptions() {
@@ -124,14 +149,7 @@ export function UserDashboardSubscriptions() {
   }
 
   return (
-    <div className="px-4 pb-8 pt-4 md:px-0 md:pt-2">
-      <div className="mb-6 md:mb-8">
-        <h1 className="mb-2 font-headline text-3xl font-extrabold tracking-tight text-on-surface md:text-4xl">
-          Subscriptions
-        </h1>
-        <p className="text-on-surface-variant">Premium account orders only — streaming, apps, credentials, and renewals.</p>
-      </div>
-
+    <div className="px-4 pb-32 pt-2 md:px-0 md:pt-0 md:pb-8">
       <section className="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
         <div className="border-b border-outline-variant/10 px-4 py-4 md:px-6">
           <h2 className="font-headline text-lg font-bold text-on-surface">Premium account orders</h2>
@@ -163,19 +181,26 @@ export function UserDashboardSubscriptions() {
                 key={row.id}
                 className="flex flex-col gap-3 rounded-xl border border-outline-variant/10 bg-surface p-4 shadow-sm md:flex-row md:items-center md:justify-between md:gap-4"
               >
-                <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 md:grid-cols-3 md:items-center">
-                  <div className="min-w-0">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                      Order ID
-                    </span>
-                    <div className="mt-0.5 truncate text-sm font-bold text-on-surface">{row.orderRef}</div>
+                <div className="flex min-w-0 flex-1 items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-surface-container-low shadow-sm">
+                    <PremiumCatalogIcon
+                      name={extractIconFromProductName(row.productName)}
+                      className="size-7"
+                    />
                   </div>
-                  <div className="min-w-0">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                      Product Name
-                    </span>
-                    <div className="mt-0.5 truncate text-sm font-semibold text-on-surface">{row.productName}</div>
-                  </div>
+                  <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 md:grid-cols-3 md:items-center">
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+                        Order ID
+                      </span>
+                      <div className="mt-0.5 truncate text-sm font-bold text-on-surface">{row.orderRef}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+                        Product Name
+                      </span>
+                      <div className="mt-0.5 truncate text-sm font-semibold text-on-surface">{row.productName}</div>
+                    </div>
                   <div className="min-w-0 md:text-right">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
                       Order Status
@@ -195,6 +220,7 @@ export function UserDashboardSubscriptions() {
                         </span>
                       ) : null}
                     </div>
+                  </div>
                   </div>
                 </div>
 
@@ -226,38 +252,42 @@ export function UserDashboardSubscriptions() {
       </section>
 
       {viewOrder ? (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
-          <div className="flex h-full w-full max-w-md flex-col border-l border-outline-variant/15 bg-surface-container-lowest shadow-xl animate-in slide-in-from-right duration-200">
-            <div className="flex items-center justify-between border-b border-outline-variant/10 p-4">
-              <div className="flex items-center gap-2">
-                <Eye className="size-5 text-primary" aria-hidden />
-                <h3 className="font-headline text-lg font-bold text-on-surface">Credentials</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-primary/20 bg-surface-container-lowest shadow-2xl shadow-primary/10 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-primary/10 bg-primary/5 px-6 py-4 rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                  <Eye className="size-5 text-primary" aria-hidden />
+                </div>
+                <h3 className="font-headline text-xl font-bold text-primary">Credentials</h3>
               </div>
               <button
                 type="button"
                 onClick={closeDrawer}
-                className="rounded-lg p-2 text-on-surface-variant hover:bg-surface-container-low"
+                className="rounded-lg p-2 text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
                 aria-label="Close"
               >
-                X
+                <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-6">
               {viewError ? (
                 <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{viewError}</p>
               ) : null}
 
-              <div className="rounded-2xl border border-outline-variant/10 bg-surface p-4 shadow-sm">
+              <div className="rounded-xl border border-primary/15 bg-gradient-to-br from-primary/5 to-primary/10 p-5 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-black text-on-surface">{viewOrder.orderRef}</p>
-                    <p className="mt-0.5 truncate text-xs text-on-surface-variant">{viewOrder.productName}</p>
-                    <p className="mt-2 text-[11px] text-on-surface-variant">
+                    <p className="text-base font-black text-on-surface">{viewOrder.orderRef}</p>
+                    <p className="mt-1 truncate text-sm text-on-surface-variant">{viewOrder.productName}</p>
+                    <p className="mt-2 text-xs text-primary/70">
                       Provided: {formatDate(viewOrder.credentialsProvidedAt) ?? "—"}
                     </p>
                   </div>
-                  <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase text-primary">
+                  <span className="inline-flex items-center rounded-full bg-primary px-3 py-1.5 text-xs font-bold uppercase text-on-primary shadow-sm">
                     {viewOrder.status}
                   </span>
                 </div>
@@ -271,32 +301,10 @@ export function UserDashboardSubscriptions() {
               ) : null}
 
               {!viewCredsLoading ? (
-                <div className="space-y-3">
-                  <div className="rounded-2xl border border-outline-variant/10 bg-surface p-4 shadow-sm">
-                    <p className="mb-3 text-xs font-black tracking-wider text-on-surface-variant uppercase">
-                      Submitted form data
-                    </p>
-                    {Object.keys(viewOrder.submittedForm ?? {}).length > 0 ? (
-                      <div className="space-y-3">
-                        {Object.entries(viewOrder.submittedForm).map(([k, v]) => (
-                          <div key={k} className="rounded-xl border border-outline-variant/10 bg-surface-container-lowest p-3">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                              {k}
-                            </p>
-                            <p className="mt-1 wrap-break-word text-sm font-mono text-on-surface">
-                              {typeof v === "string" ? v : JSON.stringify(v)}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-on-surface-variant">No submitted data stored.</p>
-                    )}
-                  </div>
-
-                  <div className="rounded-2xl border border-outline-variant/10 bg-surface p-4 shadow-sm">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <p className="text-xs font-black tracking-wider text-on-surface-variant uppercase">
+                  <div className="rounded-xl border border-primary/15 bg-gradient-to-br from-primary/5 to-transparent p-5 shadow-sm">
+                    <div className="mb-4 flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-primary" />
+                      <p className="text-xs font-black tracking-wider text-primary uppercase">
                         Credentials
                       </p>
                     </div>
@@ -304,11 +312,11 @@ export function UserDashboardSubscriptions() {
                     {viewCredItems && viewCredItems.length > 0 ? (
                       <div className="space-y-3">
                         {viewCredItems.map((it, idx) => (
-                          <div key={`${idx}-${it.key}`} className="rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-4">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+                          <div key={`${idx}-${it.key}`} className="rounded-lg border border-primary/10 bg-surface-container-lowest p-4 hover:border-primary/20 transition-colors">
+                            <p className="text-xs font-bold uppercase tracking-wider text-primary/70">
                               {it.key}
                             </p>
-                            <p className="mt-1 wrap-break-word text-sm font-mono text-on-surface">
+                            <p className="mt-2 wrap-break-word text-sm font-mono text-on-surface">
                               {it.value}
                             </p>
                           </div>
@@ -317,11 +325,11 @@ export function UserDashboardSubscriptions() {
                     ) : viewCreds && Object.keys(viewCreds).length > 0 ? (
                       <div className="space-y-3">
                         {Object.entries(viewCreds).map(([k, v]) => (
-                          <div key={k} className="rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-4">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+                          <div key={k} className="rounded-lg border border-primary/10 bg-surface-container-lowest p-4 hover:border-primary/20 transition-colors">
+                            <p className="text-xs font-bold uppercase tracking-wider text-primary/70">
                               {k}
                             </p>
-                            <p className="mt-1 wrap-break-word text-sm font-mono text-on-surface">
+                            <p className="mt-2 wrap-break-word text-sm font-mono text-on-surface">
                               {v}
                             </p>
                           </div>
@@ -331,12 +339,15 @@ export function UserDashboardSubscriptions() {
                       <p className="text-sm text-on-surface-variant">No credentials stored yet for this order.</p>
                     )}
                   </div>
-                </div>
               ) : null}
             </div>
           </div>
         </div>
       ) : null}
+
+      <div className="md:hidden">
+        <MobileBottomNav />
+      </div>
     </div>
   );
 }

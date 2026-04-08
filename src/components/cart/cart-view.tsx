@@ -16,7 +16,6 @@ import {
   ShoppingCart,
   Smartphone,
   Trash2,
-  TrendingUp,
   UserCircle,
   Wallet,
 } from "lucide-react";
@@ -83,14 +82,6 @@ export function CartView() {
   if (!line) {
     return (
       <div className="mx-auto min-h-[50vh] max-w-7xl px-6 py-12 lg:px-12 lg:py-16">
-        <header className="mb-10">
-          <h1 className="mb-2 font-headline text-4xl font-extrabold tracking-tight text-on-surface lg:text-5xl">
-            Your cart
-          </h1>
-          <p className="font-medium text-on-surface-variant">
-            Review your curated digital assets and services.
-          </p>
-        </header>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-start">
           <div className="lg:col-span-2">
             <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-outline-variant/30 p-10 text-center opacity-90">
@@ -232,14 +223,6 @@ export function CartView() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 pb-24 lg:px-12 lg:py-12 lg:pb-20">
-      <header className="mb-10 lg:mb-12">
-        <h1 className="mb-2 font-headline text-4xl font-extrabold tracking-tight text-on-surface lg:text-5xl">
-          Your cart
-        </h1>
-        <p className="font-medium text-on-surface-variant">
-          Review your curated digital assets and services.
-        </p>
-      </header>
 
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
@@ -313,10 +296,7 @@ export function CartView() {
           <div className="flex flex-col gap-6 rounded-xl bg-surface-container-lowest p-6 ambient-shadow md:flex-row">
             <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-surface-container-low">
               {line.kind === "smm" ? (
-                <div className="flex flex-col items-center justify-center gap-0.5">
-                  <TrendingUp className="h-9 w-9 text-primary" strokeWidth={1.75} aria-hidden />
-                  <SocialBrandIcon id={line.platform} className="h-7 w-7 text-on-surface" />
-                </div>
+                <SocialBrandIcon id={line.platform} className="h-12 w-12" />
               ) : (
                 <PremiumBrandMark
                   brandId={line.brandId}

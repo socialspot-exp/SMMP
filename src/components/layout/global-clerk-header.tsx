@@ -4,7 +4,7 @@ import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { CuratorUserButton } from "@/components/layout/curator-user-button";
 import { usePathname } from "next/navigation";
 
-/** Hidden on `/admin*` — admin chrome uses its own `<UserButton />`. */
+/** Hidden on `/admin*`, `/dashboard*`, `/`, `/cart`, `/services*` — those layouts render their own auth chrome. */
 export function GlobalClerkHeader() {
   const pathname = usePathname();
   if (pathname.startsWith("/admin")) {
@@ -21,6 +21,10 @@ export function GlobalClerkHeader() {
   }
   /** Services routes use `ServicesChrome` headers with auth; this bar only added double top offset. */
   if (pathname.startsWith("/services")) {
+    return null;
+  }
+  /** Dashboard uses `UserDashboardShell` + `HomeFloatingHeader` on mobile; same double-header issue. */
+  if (pathname.startsWith("/dashboard")) {
     return null;
   }
 

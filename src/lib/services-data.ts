@@ -53,8 +53,8 @@ export type SMMService = {
   features?: string[];
 };
 
-export type PremiumCategory = "streaming" | "music" | "gaming" | "productivity" | "vpn";
-export type PremiumBilling = "monthly" | "yearly" | "one-time";
+export type PremiumCategory = "streaming" | "music" | "gaming" | "productivity" | "vpn" | "entertainment" | "ai" | "saas";
+export type PremiumBilling = "monthly" | "yearly" | "one-time" | "weekly" | "daily";
 
 /** Brand mark on product pages (Simple Icons / known marks). */
 export type PremiumBrandId =
@@ -147,12 +147,17 @@ export const PREMIUM_CATEGORIES: { id: PremiumCategory; label: string }[] = [
   { id: "gaming", label: "Gaming" },
   { id: "productivity", label: "Productivity" },
   { id: "vpn", label: "VPN & tools" },
+  { id: "entertainment", label: "Entertainment" },
+  { id: "ai", label: "AI" },
+  { id: "saas", label: "SaaS" },
 ];
 
 export const PREMIUM_BILLING: { id: PremiumBilling; label: string }[] = [
   { id: "monthly", label: "Monthly" },
   { id: "yearly", label: "Yearly" },
   { id: "one-time", label: "One-time" },
+  { id: "weekly", label: "Weekly" },
+  { id: "daily", label: "Daily" },
 ];
 
 export const SMM_SERVICES: SMMService[] = [

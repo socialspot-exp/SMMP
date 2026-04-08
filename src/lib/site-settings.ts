@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 
 export type SiteSettingsRow = {
@@ -43,7 +44,7 @@ export function mergeSiteSettings(row: Partial<SiteSettingsRow> | null): SiteSet
 }
 
 /** Server-only: reads via service role (works without RLS anon). */
-export async function getSiteSettingsServer(): Promise<SiteSettingsRow> {
+export const getSiteSettingsServer = cache(async function getSiteSettingsServer(): Promise<SiteSettingsRow> {
   const supabase = createSupabaseAdmin();
   if (!supabase) {
     return mergeSiteSettings(null);
@@ -58,4 +59,4 @@ export async function getSiteSettingsServer(): Promise<SiteSettingsRow> {
     return mergeSiteSettings(null);
   }
   return mergeSiteSettings(data as SiteSettingsRow);
-}
+});

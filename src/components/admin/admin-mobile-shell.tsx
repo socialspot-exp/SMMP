@@ -26,6 +26,7 @@ import {
   X,
 } from "lucide-react";
 import { AdminClerkUserButton } from "@/components/admin/admin-clerk-user-button";
+import { useSiteSettings } from "@/components/site-settings/site-settings-context";
 import { cn } from "@/lib/utils";
 
 const DRAWER_AVATAR =
@@ -90,6 +91,7 @@ const DRAWER_LINKS: { href: string; label: string; Icon: typeof LayoutDashboard 
 
 export function AdminMobileShell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const site = useSiteSettings();
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -292,10 +294,21 @@ export function AdminMobileShell() {
       >
         <div className="flex items-center justify-between px-6 pt-8 pb-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-on-primary">
-              <Sparkles className="size-5 stroke-[1.75]" />
-            </div>
-            <span className="font-headline text-lg font-bold text-on-surface">Curator Market</span>
+            {site.logo_url?.trim() ? (
+              // eslint-disable-next-line @next/next/no-img-element -- admin can set external HTTPS logo URL
+              <img
+                src={site.logo_url.trim()}
+                alt=""
+                className="h-8 w-auto max-w-40 object-contain object-left"
+              />
+            ) : (
+              <>
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-on-primary">
+                  <Sparkles className="size-5 stroke-[1.75]" />
+                </div>
+                <span className="font-headline text-lg font-bold text-on-surface">Curator Market</span>
+              </>
+            )}
           </div>
           <button
             type="button"

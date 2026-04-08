@@ -51,9 +51,8 @@ export function UserDashboardOverview() {
       <UserDashboardMobile />
 
       <div className="hidden md:block">
-      <div className="pt-2">
-      <div className="mb-8">
-        <h1 className="mb-2 font-headline text-4xl font-extrabold tracking-tight text-on-surface">
+      <div className="mb-6">
+        <h1 className="mb-1 font-headline text-4xl font-extrabold tracking-tight text-on-surface">
           Welcome back, {firstName}!
         </h1>
         <p className="text-lg text-on-surface-variant">
@@ -237,7 +236,6 @@ export function UserDashboardOverview() {
             View Full Audit Log
           </button>
         </div>
-      </div>
       </div>
       </div>
     </>

@@ -11,6 +11,7 @@ export function MobileBottomNav() {
   const isServices = pathname === "/services";
   const isAuth = pathname === "/login" || pathname === "/signup";
   const isCart = pathname === "/cart";
+  const isProfile = pathname === "/dashboard" || pathname.startsWith("/dashboard/");
 
   const itemClass = (active: boolean) =>
     cn(
@@ -40,7 +41,7 @@ export function MobileBottomNav() {
           Cart
         </span>
       </Link>
-      <Link href="/login" className={itemClass(isAuth)}>
+      <Link href="/dashboard" className={itemClass(isProfile || isAuth)}>
         <User className="h-6 w-6" strokeWidth={2} aria-hidden />
         <span className="mt-1 font-label text-[10px] font-semibold tracking-wider uppercase">
           Profile

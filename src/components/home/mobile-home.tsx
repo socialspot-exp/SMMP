@@ -22,7 +22,7 @@ export function MobileHome() {
     <>
       <HomeFloatingHeader />
 
-      <main className="pb-32 pt-28">
+      <main className="pb-32 pt-14">
         <section className="mb-12 px-6">
           <div
             className="relative overflow-hidden rounded-[2rem] p-8 text-on-primary"

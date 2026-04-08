@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -12,8 +11,11 @@ import {
   ChevronDown,
   Gauge,
   Headphones,
+  Lock,
   Mail,
   MonitorSmartphone,
+  Timer,
+  UserCheck,
   Shield,
   Tv,
   Unlock,
@@ -36,12 +38,6 @@ import { PremiumBrandMark } from "@/components/product/premium-brand-mark";
 import { ProductBreadcrumb } from "@/components/product/product-breadcrumb";
 import { RatingStars } from "@/components/product/rating-stars";
 import { PremiumCatalogIcon } from "@/lib/premium-catalog-icons";
-
-const MOBILE_HERO =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuADIzZBCB942__z26uP2fGbFkl0S_H9dukw1KPF76v4S1TRconn6Cqfk0BX5fwJM8pW35fNdylbOvSr3XWA-245HPP4MX8yBByhgc5zXHRORwwap5obloeH-IDUqCJYdtrL_lxeQUoS3KGTwHUtc_1PbcqwmjcLNp0yZQVqmulb4f2O8KWrg0Ky1Es-lp_YgkZrUN2t1CjUzMIfjJZXJpkeYMogMd0GT6C2WP7mu4gVu1bDwVnLwG86QmGmmXSS0VBEDa53sQBmjyA";
-
-/** Desktop hero — same aspect & treatment as SMM product page (`aspect-video`, ambient-shadow). */
-const DESKTOP_PREMIUM_HERO = "/premium-desktop-hero.png";
 
 const BENTO_ICONS = [Tv, MonitorSmartphone, Ban, Zap] as const;
 
@@ -170,44 +166,16 @@ export function PremiumProductClient({ product: p, catalog = PREMIUM_SERVICES }:
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
             <div className="lg:col-span-8">
-              <div className="mb-6 flex flex-col items-start gap-6 md:flex-row md:items-center">
+              <div className="mb-6 flex flex-col items-start gap-4 md:flex-row md:items-center">
                 <PremiumBrandMark
                   brandId={p.brandId}
                   productName={p.name}
                   fallbackLetter={initial}
                 />
                 <div className="min-w-0">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 font-headline text-xs font-bold tracking-wider text-primary uppercase">
-                      Premium service
-                    </span>
-                    <RatingStars value={p.rating} size="md" />
-                  </div>
-                  <h1 className="mb-2 font-headline text-4xl font-extrabold tracking-tight text-on-surface md:text-5xl">
+                  <h1 className="font-headline text-4xl font-extrabold tracking-tight text-on-surface md:text-5xl">
                     {p.name}
                   </h1>
-                  <div className="flex flex-wrap items-center gap-2 text-on-surface-variant">
-                    <BadgeCheck className="h-5 w-5 shrink-0 text-primary" aria-hidden />
-                    <span className="text-sm font-medium">Verified curator asset</span>
-                    <span className="text-outline-variant">•</span>
-                    <span className="text-sm font-medium">In stock</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative mb-12 aspect-video overflow-hidden rounded-xl ambient-shadow">
-                <Image
-                  src={DESKTOP_PREMIUM_HERO}
-                  alt={`${p.name} — preview`}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(min-width: 1024px) 60vw, 100vw"
-                  priority
-                />
-                <div className="absolute inset-0 flex items-end bg-linear-to-t from-black/60 to-transparent p-6 md:p-8">
-                  <p className="font-headline text-xl font-bold text-white">
-                    Instant credentials — premium access on your terms.
-                  </p>
                 </div>
               </div>
 
@@ -294,25 +262,67 @@ export function PremiumProductClient({ product: p, catalog = PREMIUM_SERVICES }:
               </div>
 
               {related.length > 0 ? (
-                <section className="mt-12">
-                  <h2 className="mb-4 font-headline text-lg font-bold text-on-surface">
+                <section className="mt-14 border-t border-outline-variant/10 pt-12">
+                  <h2 className="mb-6 font-headline text-xl font-bold text-on-surface">
                     You may also like
                   </h2>
-                  <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-2">
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     {related.map((r) => (
-                      <Link
-                        key={r.id}
-                        href={`/services/premium/${r.id}`}
-                        className="min-w-[220px] shrink-0 rounded-xl border border-outline-variant/10 bg-surface-container-lowest p-4 shadow-sm transition-shadow hover:shadow-md"
-                      >
-                        <span className="line-clamp-2 font-headline text-sm font-bold text-on-surface">
-                          {r.name}
-                        </span>
-                        <p className="mt-2 font-headline text-lg font-black text-primary">
-                          ${r.priceFrom.toFixed(2)}
-                        </p>
-                      </Link>
+                      <PremiumRelatedCard key={r.id} service={r} />
                     ))}
+                  </div>
+                </section>
+              ) : null}
+
+              {related.length > 0 ? (
+                <section className="bg-background py-20">
+                  <div className="mx-auto w-full max-w-7xl">
+                    <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+                      {[
+                        {
+                          icon: Timer,
+                          title: "Instant delivery",
+                          body: "Keys and access arrive quickly after checkout.",
+                          ring: "bg-blue-50 text-blue-600",
+                        },
+                        {
+                          icon: UserCheck,
+                          title: "High retention",
+                          body: "Replacements and coverage when supported plans need it.",
+                          ring: "bg-green-50 text-green-600",
+                        },
+                        {
+                          icon: Headphones,
+                          title: "24/7 support",
+                          body: "Real help for access issues and credential handoff.",
+                          ring: "bg-purple-50 text-purple-600",
+                        },
+                        {
+                          icon: Lock,
+                          title: "Encrypted & secure transaction",
+                          body: "SSL-protected checkout and clear delivery records.",
+                          ring: "bg-orange-50 text-orange-600",
+                        },
+                      ].map((item) => (
+                        <div
+                          key={item.title}
+                          className="flex flex-col items-center rounded-xl bg-surface-container-lowest p-8 text-center ambient-shadow"
+                        >
+                          <div
+                            className={[
+                              "mb-6 flex h-16 w-16 items-center justify-center rounded-full",
+                              item.ring,
+                            ].join(" ")}
+                          >
+                            <item.icon className="h-8 w-8" strokeWidth={1.75} aria-hidden />
+                          </div>
+                          <h4 className="mb-2 font-headline font-bold text-on-surface">
+                            {item.title}
+                          </h4>
+                          <p className="text-sm text-on-surface-variant">{item.body}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </section>
               ) : null}
@@ -418,41 +428,24 @@ export function PremiumProductClient({ product: p, catalog = PREMIUM_SERVICES }:
         </div>
 
         <section className="bg-surface-container-lowest px-6 pt-6 pb-6">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-primary">
-            <BadgeCheck className="h-4 w-4 shrink-0" aria-hidden />
-            <span className="font-label text-[10px] font-bold tracking-widest uppercase">
-              Official premium partner
-            </span>
+          <div className="mb-4 flex items-center gap-3">
+            <PremiumBrandMark
+              brandId={p.brandId}
+              productName={p.name}
+              fallbackLetter={initial}
+            />
+            <div>
+              <h1 className="font-headline text-4xl leading-tight font-extrabold tracking-tight text-on-surface">
+                {p.name}
+              </h1>
+            </div>
           </div>
-          <h1 className="mb-4 font-headline text-4xl leading-tight font-extrabold tracking-tight text-on-surface">
-            {cat}{" "}
-            <span className="text-primary">{headlineAccent}</span>
-          </h1>
           <p className="mb-6 text-base leading-relaxed text-on-surface-variant">{p.description}</p>
           {p.longDescription ? (
             <p className="mb-6 whitespace-pre-wrap text-base leading-relaxed text-on-surface-variant">
               {p.longDescription}
             </p>
           ) : null}
-          <div className="relative mb-8 aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-900 shadow-2xl">
-            <Image
-              src={MOBILE_HERO}
-              alt={`${p.name} — preview`}
-              fill
-              className="object-cover opacity-80"
-              sizes="100vw"
-              priority
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
-              <div className="glass-effect rounded-full border border-white/30 bg-white/20 px-3 py-1 text-xs text-white backdrop-blur-md">
-                4K Ultra HD
-              </div>
-              <div className="glass-effect rounded-full border border-white/30 bg-white/20 px-3 py-1 text-xs text-white backdrop-blur-md">
-                Multi-screen
-              </div>
-            </div>
-          </div>
         </section>
 
         <section className="px-6 py-8">
@@ -647,21 +640,63 @@ export function PremiumProductClient({ product: p, catalog = PREMIUM_SERVICES }:
         </section>
 
         {related.length > 0 ? (
-          <section className="px-6 py-6">
-            <h3 className="mb-3 font-headline text-lg font-bold">Related</h3>
-            <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
-              {related.map((r) => (
-                <Link
-                  key={r.id}
-                  href={`/services/premium/${r.id}`}
-                  className="min-w-[200px] shrink-0 rounded-xl border border-outline-variant/10 bg-surface-container-lowest p-3 text-sm font-semibold shadow-sm"
-                >
-                  <span className="line-clamp-2">{r.name}</span>
-                  <span className="mt-1 block font-headline text-primary">${r.priceFrom.toFixed(2)}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
+          <>
+            <section className="px-6 py-6">
+              <h3 className="mb-3 font-headline text-lg font-bold">You may also like</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {related.map((r) => (
+                  <PremiumRelatedCard key={r.id} service={r} />
+                ))}
+              </div>
+            </section>
+
+            <section className="bg-background px-6 py-16">
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  {
+                    icon: Timer,
+                    title: "Instant delivery",
+                    body: "Keys and access arrive quickly after checkout.",
+                    ring: "bg-blue-50 text-blue-600",
+                  },
+                  {
+                    icon: UserCheck,
+                    title: "High retention",
+                    body: "Replacements and coverage when supported plans need it.",
+                    ring: "bg-green-50 text-green-600",
+                  },
+                  {
+                    icon: Headphones,
+                    title: "24/7 support",
+                    body: "Real help for access issues and credential handoff.",
+                    ring: "bg-purple-50 text-purple-600",
+                  },
+                  {
+                    icon: Lock,
+                    title: "Encrypted & secure transaction",
+                    body: "SSL-protected checkout and clear delivery records.",
+                    ring: "bg-orange-50 text-orange-600",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex flex-col items-center rounded-xl bg-surface-container-lowest p-6 text-center shadow-sm"
+                  >
+                    <div
+                      className={[
+                        "mb-4 flex h-14 w-14 items-center justify-center rounded-full",
+                        item.ring,
+                      ].join(" ")}
+                    >
+                      <item.icon className="h-7 w-7" strokeWidth={1.75} aria-hidden />
+                    </div>
+                    <h4 className="mb-2 font-headline font-bold text-on-surface">{item.title}</h4>
+                    <p className="text-xs text-on-surface-variant">{item.body}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
         ) : null}
       </div>
 
@@ -722,5 +757,54 @@ function DesktopPlanRow({
         ${plan.price.toFixed(2)}
       </div>
     </button>
+  );
+}
+
+function PremiumRelatedCard({ service }: { service: PremiumService }) {
+  const href = `/services/premium/${service.id}`;
+  const cat = PREMIUM_CATEGORIES.find((c) => c.id === service.category)?.label ?? service.category;
+  const iconName = service.iconKey ?? "Sparkles";
+
+  return (
+    <Link
+      href={href}
+      className="group flex h-full min-h-[260px] flex-col rounded-2xl border border-outline-variant/12 bg-surface-container-lowest p-6 shadow-[0_8px_32px_-12px_rgba(44,47,50,0.14)] transition-shadow duration-300 hover:shadow-[0_14px_44px_-16px_rgba(44,47,50,0.2)]"
+    >
+      <div className="mb-5 flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <PremiumCatalogIcon name={iconName} className="h-6 w-6 stroke-[1.75]" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase">
+            {cat}
+          </p>
+          <h3 className="mt-0.5 line-clamp-1 font-headline text-sm font-bold text-on-surface group-hover:text-primary">
+            {service.name}
+          </h3>
+        </div>
+      </div>
+
+      <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-relaxed text-on-surface-variant">
+        {service.description}
+      </p>
+
+      <div className="mt-auto pt-5">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <span className="block text-[10px] font-bold tracking-widest text-on-surface-variant uppercase">
+              From
+            </span>
+            <span className="font-headline text-2xl font-black tracking-tight text-primary tabular-nums">
+              ${service.priceFrom.toFixed(2)}
+            </span>
+          </div>
+        </div>
+        <div className="mt-4">
+          <span className="block w-full rounded-xl bg-primary px-4 py-2.5 text-center text-xs font-bold uppercase text-white shadow-md shadow-primary/25 transition-transform group-hover:scale-[1.01] active:scale-[0.98]">
+            Buy now
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

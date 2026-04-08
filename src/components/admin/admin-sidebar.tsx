@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import {
   BarChart3,
   ChevronDown,
@@ -18,6 +19,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
+import { useSiteSettings } from "@/components/site-settings/site-settings-context";
 import { cn } from "@/lib/utils";
 
 const AVATAR =
@@ -26,6 +28,8 @@ const AVATAR =
 const navIcon = "size-5 shrink-0 stroke-[1.75]";
 
 export function AdminSidebar() {
+  const site = useSiteSettings();
+  const { user, isLoaded } = useUser();
   const pathname = usePathname();
   const dashActive = pathname === "/admin";
   const usersActive = pathname === "/admin/users";
@@ -58,15 +62,23 @@ export function AdminSidebar() {
     <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-outline-variant/15 bg-surface lg:flex">
       <div className="p-8">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-on-primary">
-            <Sparkles className="size-6 stroke-[1.75]" aria-hidden />
-          </div>
-          <div>
-            <h1 className="font-headline text-lg leading-tight font-bold text-on-surface">
-              Curator Market
-            </h1>
-            <p className="text-xs font-medium text-on-surface-variant">Admin Portal</p>
-          </div>
+          {site.logo_url?.trim() ? (
+            // eslint-disable-next-line @next/next/no-img-element -- admin can set external HTTPS logo URL
+            <img
+              src={site.logo_url.trim()}
+              alt=""
+              className="h-9 w-auto max-w-44 object-contain object-left"
+            />
+          ) : (
+            <>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-on-primary">
+                <Sparkles className="size-6 stroke-[1.75]" aria-hidden />
+              </div>
+              <h1 className="font-headline text-lg leading-tight font-bold text-on-surface">
+                Curator Market
+              </h1>
+            </>
+          )}
         </div>
       </div>
 
@@ -281,8 +293,15 @@ export function AdminSidebar() {
             <Image src={AVATAR} alt="" fill className="object-cover" sizes="40px" />
           </div>
           <div className="min-w-0 overflow-hidden">
-            <p className="truncate text-sm font-bold">Alex Curator</p>
-            <p className="text-xs text-on-surface-variant">Super Admin</p>
+            <p className="truncate text-sm font-bold">
+              {isLoaded
+                ? user?.fullName?.trim() ||
+                  user?.username?.trim() ||
+                  user?.primaryEmailAddress?.emailAddress?.split("@")[0]?.trim() ||
+                  "Admin"
+                : "Loading..."}
+            </p>
+            <p className="text-xs text-on-surface-variant">Admin</p>
           </div>
         </div>
       </div>

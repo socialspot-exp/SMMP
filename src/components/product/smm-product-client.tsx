@@ -246,12 +246,6 @@ export function SmmProductClient({ product: p, catalog: catalogProp }: Props) {
                     ))}
                   </div>
 
-                  {qtyLimitsLine ? (
-                    <p className="text-center text-xs font-medium text-on-surface-variant">
-                      {qtyLimitsLine}
-                    </p>
-                  ) : null}
-
                   <div className="space-y-6">
                     <div>
                       <label
@@ -446,11 +440,6 @@ export function SmmProductClient({ product: p, catalog: catalogProp }: Props) {
               </span>
             </div>
             <div className="flex flex-col gap-3">
-              {qtyLimitsLine ? (
-              <p className="px-1 text-center text-xs font-medium text-on-surface-variant">
-                {qtyLimitsLine}
-              </p>
-            ) : null}
             {tiers.map((t) => (
                 <label key={t.id} className="relative cursor-pointer">
                   <input

@@ -42,6 +42,11 @@ type AdminPremiumOrderRow = {
   status: string;
 };
 
+function adminDisplayStatus(rawStatus: string, cred: CredState): string {
+  if (cred === "sent" && /await|provision|pending/i.test(rawStatus)) return "Credentials sent";
+  return rawStatus;
+}
+
 function statusPillClass(status: string) {
   const s = status.toLowerCase();
   if (s.includes("complete") || s.includes("active")) return "bg-blue-100 text-blue-700";
@@ -118,6 +123,8 @@ export function AdminPremiumOrdersView({ className }: { className?: string }) {
       const raw = Array.isArray(data?.orders) ? data.orders : [];
       const mapped: AdminPremiumOrderRow[] = raw.map((o: any) => {
         const timeLine = formatTime(o.credentialsProvidedAt ?? o.createdAt ?? o.updated_at ?? null);
+        const credentials = (String(o.credentialsState ?? "pending").toLowerCase() as CredState) || "pending";
+        const statusRaw = String(o.status ?? "Provisioning");
         return {
           id: String(o.id),
           orderRef: String(o.orderRef ?? o.order_ref ?? o.orderId ?? ""),
@@ -125,12 +132,12 @@ export function AdminPremiumOrdersView({ className }: { className?: string }) {
           customerEmail: String(o.deliveryEmail ?? o.customerEmail ?? ""),
           vip: Boolean(o.vip),
           product: String(o.productName ?? o.product ?? ""),
-          credentials: (String(o.credentialsState ?? "pending").toLowerCase() as CredState) || "pending",
+          credentials,
           credentialsProvidedAt: o.credentialsProvidedAt ?? null,
           credentialsPayload: (o.credentials && typeof o.credentials === "object" ? o.credentials : {}) as Record<string, string>,
           credentialsItems: Array.isArray(o.credentialsItems) ? (o.credentialsItems as Array<{ key: string; value: string }>) : [],
           price: o.price != null ? String(o.price) : null,
-          status: String(o.status ?? "Provisioning"),
+          status: adminDisplayStatus(statusRaw, credentials),
         };
       });
 

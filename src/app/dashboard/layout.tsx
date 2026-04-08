@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { UserDashboardShell } from "@/components/dashboard/user-dashboard-shell";
+import { getSiteSettingsServer } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Dashboard | Curator SMM",
@@ -14,10 +15,21 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const user = await currentUser();
+  let user = null;
+  try {
+    user = await currentUser();
+  } catch {
+    user = null;
+  }
+
   if (!user) {
     redirect("/login");
   }
 
-  return <UserDashboardShell>{children}</UserDashboardShell>;
+  const site = await getSiteSettingsServer();
+  const headerLogoUrl = site.logo_url?.trim() || null;
+
+  return (
+    <UserDashboardShell headerLogoUrl={headerLogoUrl}>{children}</UserDashboardShell>
+  );
 }

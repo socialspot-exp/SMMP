@@ -44,23 +44,15 @@ export function UserWalletTransactions() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6 p-4 md:p-0">
+    <div className="mx-auto w-full max-w-5xl space-y-4 p-4 md:p-0">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <Link
-            href="/dashboard/wallet"
-            className="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-xs font-bold text-on-surface-variant transition-colors hover:bg-surface"
-          >
-            <ChevronLeft className="size-4 stroke-2" aria-hidden />
-            Back to wallet
-          </Link>
-          <h1 className="mt-2 font-headline text-3xl font-extrabold tracking-tight text-on-surface">
-            Transactions
-          </h1>
-          <p className="mt-1 text-sm font-medium text-on-surface-variant">
-            Full wallet history
-          </p>
-        </div>
+        <Link
+          href="/dashboard/wallet"
+          aria-label="Back"
+          className="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-xs font-bold text-on-surface-variant transition-colors hover:bg-surface"
+        >
+          <ChevronLeft className="size-4 stroke-2" aria-hidden />
+        </Link>
       </div>
 
       {error ? (

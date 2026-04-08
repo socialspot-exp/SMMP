@@ -3,23 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Bell,
   CheckCircle2,
   Headphones,
   Heart,
-  Home,
   LineChart,
   Megaphone,
   ShoppingCart,
   Sparkles,
-  Store,
   Wallet,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-context";
 import { cn } from "@/lib/utils";
-
-const MOBILE_AVATAR =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuDAwos6gSW3rgqMbTupu6iQWljQj87oDuAjzb5mco25I2_YO52KU26qc4bzsvuR5aMO2qdSTjuoHG82jz0xo4Z9GgnYaRujQ-IjuL3lRkgsxovQwgJVkMUb64i8_rmeQq6_g3cl7sbtTURr2uz0tu3yzL8vooUVktNL3ej8G9JNjxoj2vLxVmSUd-Boc74Ulnq0QY8SAJpnG6eDPRwX-B5FlWwgB4Hp4gYm8-R17KZ_mdITUAcVgl9mn-ZahGTYebv7LYiyQ5ttSoc";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 
 const DISNEY_LOGO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCGD-OQ33DoRk-Hx3_u9NUoDozArPo0M-MXlFLgyaDjUJHvn0jggmDB1raiMlwPd0_xbMPgkp3GMuL3Vjw75CZxjY2Cg_JCDxqx5oNLkuY31A5kgxFhQUNLRexWXihEelRxnEYThCuNk-saPnwyGNcg7gHVY4ZoQdmauTDwSRMT0z4dHjvZZTlhlg-ossGDrMPJerIrIy2BV87tS0qnTiCXF_kDPCmS0qw5sEney2Tu90PI9abtyJps1cc2nG23AK81HV53BR78d1E";
@@ -33,28 +28,7 @@ export function UserDashboardMobile() {
 
   return (
     <div className="min-h-[max(884px,100dvh)] bg-surface pb-32 text-on-surface md:hidden">
-      <header className="sticky top-0 z-50 w-full bg-surface-container-lowest/80 shadow-[0_4px_40px_-10px_rgba(44,47,50,0.06)] backdrop-blur-xl">
-        <div className="flex w-full items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-primary/10 bg-surface-container">
-              <Image src={MOBILE_AVATAR} alt="" fill className="object-cover" sizes="40px" />
-            </div>
-            <h1 className="font-headline text-lg font-bold tracking-tight text-on-surface">
-              Marketplace
-            </h1>
-          </div>
-          <button
-            type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-on-surface-variant transition-all active:scale-95"
-            aria-label="Notifications"
-          >
-            <Bell className="size-5 stroke-[1.75]" />
-          </button>
-        </div>
-        <div className="h-px w-full bg-surface-container-high/80" />
-      </header>
-
-      <main className="space-y-8 px-6 pt-6">
+      <main className="space-y-8 px-6 pt-4">
         <section className="space-y-1">
           <h2 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface">
             Welcome back, {firstName}!
@@ -301,36 +275,7 @@ export function UserDashboardMobile() {
         </section>
       </main>
 
-      <nav className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around rounded-t-3xl bg-surface-container-lowest/80 px-4 pt-3 pb-6 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] backdrop-blur-xl">
-        <Link
-          href="/dashboard"
-          className="flex flex-col items-center justify-center rounded-2xl bg-primary/10 px-5 py-2 text-primary transition-all duration-200 active:scale-90"
-        >
-          <Home className="size-6 stroke-[1.75]" />
-          <span className="mt-1 font-body text-[10px] font-semibold tracking-wider uppercase">Home</span>
-        </Link>
-        <Link
-          href="/services"
-          className="flex flex-col items-center justify-center px-5 py-2 text-on-surface-variant transition-all duration-200 hover:text-primary active:scale-90"
-        >
-          <Store className="size-6 stroke-[1.75]" />
-          <span className="mt-1 font-body text-[10px] font-semibold tracking-wider uppercase">Market</span>
-        </Link>
-        <a
-          href="#"
-          className="flex flex-col items-center justify-center px-5 py-2 text-on-surface-variant transition-all duration-200 hover:text-primary active:scale-90"
-        >
-          <LineChart className="size-6 stroke-[1.75]" />
-          <span className="mt-1 font-body text-[10px] font-semibold tracking-wider uppercase">Growth</span>
-        </a>
-        <a
-          href="#"
-          className="flex flex-col items-center justify-center px-5 py-2 text-on-surface-variant transition-all duration-200 hover:text-primary active:scale-90"
-        >
-          <Wallet className="size-6 stroke-[1.75]" />
-          <span className="mt-1 font-body text-[10px] font-semibold tracking-wider uppercase">Wallet</span>
-        </a>
-      </nav>
+      <MobileBottomNav />
     </div>
   );
 }

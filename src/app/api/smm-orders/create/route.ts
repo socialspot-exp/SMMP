@@ -225,7 +225,6 @@ export async function POST(req: Request) {
       success: true,
       order: { id: orderId, orderRef: String(data.order_ref), apiOrderId: null },
       warning: "Order created but panel did not return API order id.",
-      panelResponse: obj,
     });
   }
 

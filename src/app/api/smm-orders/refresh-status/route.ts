@@ -121,7 +121,6 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error: !addRes.ok ? `Panel HTTP ${addRes.status}` : "Panel did not return order id",
-          panelResponse: addObj,
         },
         { status: 502 }
       );
@@ -175,7 +174,7 @@ export async function POST(req: Request) {
 
   if (!res.ok) {
     return NextResponse.json(
-      { error: `Panel HTTP ${res.status}`, panelResponse: payload },
+      { error: `Panel HTTP ${res.status}` },
       { status: 502 }
     );
   }
@@ -199,7 +198,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     status: nextStatus ?? String(order.status),
-    panelResponse: obj,
   });
 }
 

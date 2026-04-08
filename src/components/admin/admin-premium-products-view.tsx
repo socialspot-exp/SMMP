@@ -11,6 +11,7 @@ import {
   Pencil,
   Plus,
   Star,
+  Trash2,
 } from "lucide-react";
 import { AdminPremiumProductForm } from "@/components/admin/admin-premium-product-form";
 import type { PremiumCatalogCategoryDTO } from "@/lib/premium-catalog-api";
@@ -45,6 +46,8 @@ export function AdminPremiumProductsView({ className }: { className?: string }) 
   const [loading, setLoading] = useState(true);
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
   const [editRow, setEditRow] = useState<PremiumProductRow | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -125,6 +128,48 @@ export function AdminPremiumProductsView({ className }: { className?: string }) 
     return rows;
   }, [category, query, products]);
 
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === filtered.length && filtered.length > 0) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map((p) => p.id)));
+    }
+  };
+
+  const handleMassDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Delete ${selected.size} product(s)? This cannot be undone.`)) return;
+    setDeleting(true);
+    try {
+      const ids = Array.from(selected);
+      const res = await fetch("/api/admin/premium-products", {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(typeof data?.error === "string" ? data.error : "Delete failed");
+      }
+      setSelected(new Set());
+      await load();
+    } catch (e) {
+      alert(formatAdminApiError(e));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const filterBtn = (filterKey: CatFilter, label: string) => (
     <button
       key={String(filterKey)}
@@ -178,6 +223,17 @@ export function AdminPremiumProductsView({ className }: { className?: string }) 
           ) : null}
         </div>
         <div className="flex flex-wrap gap-3">
+          {selected.size > 0 ? (
+            <button
+              type="button"
+              onClick={handleMassDelete}
+              disabled={deleting}
+              className="flex items-center gap-2 rounded-xl bg-error px-5 py-2.5 font-semibold text-on-error shadow-lg shadow-error/20 transition-all hover:bg-error/90 active:scale-[0.98] disabled:opacity-50"
+            >
+              <Trash2 className="size-4 stroke-[1.75]" aria-hidden />
+              Delete {selected.size}
+            </button>
+          ) : null}
           <button
             type="button"
             disabled
@@ -248,6 +304,15 @@ export function AdminPremiumProductsView({ className }: { className?: string }) 
             <thead>
               <tr className="bg-surface-container-low/50">
                 <th className="px-6 py-4 text-xs font-bold tracking-wider text-on-surface-variant uppercase">
+                  <input
+                    type="checkbox"
+                    checked={filtered.length > 0 && selected.size === filtered.length}
+                    onChange={toggleSelectAll}
+                    className="size-4 cursor-pointer rounded border-outline-variant accent-primary"
+                    aria-label="Select all"
+                  />
+                </th>
+                <th className="px-6 py-4 text-xs font-bold tracking-wider text-on-surface-variant uppercase">
                   ID
                 </th>
                 <th className="px-6 py-4 text-xs font-bold tracking-wider text-on-surface-variant uppercase">
@@ -282,13 +347,22 @@ export function AdminPremiumProductsView({ className }: { className?: string }) 
             <tbody className="divide-y divide-surface-container">
               {!loading && filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-6 py-12 text-center text-sm text-on-surface-variant">
+                  <td colSpan={11} className="px-6 py-12 text-center text-sm text-on-surface-variant">
                     No products loaded. Check Supabase connection or add a product.
                   </td>
                 </tr>
               ) : null}
               {filtered.map((s) => (
                 <tr key={s.id} className="transition-colors hover:bg-surface-container-low/30">
+                  <td className="px-6 py-5">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(s.id)}
+                      onChange={() => toggleSelect(s.id)}
+                      className="size-4 cursor-pointer rounded border-outline-variant accent-primary"
+                      aria-label={`Select ${s.name}`}
+                    />
+                  </td>
                   <td className="px-6 py-5 font-mono text-sm text-on-surface-variant">{s.id}</td>
                   <td className="max-w-[240px] px-6 py-5">
                     <span className="font-semibold text-on-surface">{s.name}</span>
