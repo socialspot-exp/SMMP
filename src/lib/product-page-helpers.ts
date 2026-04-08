@@ -341,6 +341,9 @@ export function getPremiumBentoItems(category: PremiumCategory): PremiumBentoIte
     gaming,
     productivity,
     vpn,
+    entertainment: streaming,
+    ai: productivity,
+    saas: productivity,
   };
   return map[category] ?? streaming;
 }

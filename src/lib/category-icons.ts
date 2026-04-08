@@ -73,6 +73,9 @@ export const DEFAULT_PREMIUM_CATEGORY_ICONS: Record<PremiumCategory, CategoryIco
   gaming: "Gamepad2",
   productivity: "Briefcase",
   vpn: "Shield",
+  entertainment: "Sparkles",
+  ai: "Zap",
+  saas: "Briefcase",
 };
 
 export const CATEGORY_ICONS_STORAGE_KEY = "curator-admin-category-icons-v1";

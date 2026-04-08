@@ -226,7 +226,7 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
       .then((data: { products?: PremiumService[] }) => {
         if (cancelled) return;
         if (Array.isArray(data.products)) {
-          setPremServices(data.products.filter((p) => p.isActive !== false));
+          setPremServices(data.products);
         }
       })
       .catch(() => {});
@@ -242,7 +242,7 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
       .then((data: { products?: SMMService[] }) => {
         if (cancelled) return;
         if (Array.isArray(data.products)) {
-          setSmmServices(data.products.filter((p) => p.isActive !== false));
+          setSmmServices(data.products);
         }
       })
       .catch(() => {});
