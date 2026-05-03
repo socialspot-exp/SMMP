@@ -18,16 +18,17 @@ The Supabase MCP server is a hosted service that connects your AI tools to Supab
 **URL:** `https://mcp.supabase.com/mcp`
 
 Optional parameters you can add to the URL:
+
 - `?read_only=true` - Execute all queries as read-only
 - `?project_ref=YOUR_PROJECT_REF` - Scope to specific project
 - `?features=database,docs` - Enable only specific tool groups
 
 Example: `https://mcp.supabase.com/mcp?read_only=true&project_ref=abc123`
 
-5. Save and restart Cursor
-6. The MCP client will redirect you to log in to Supabase
-7. Grant access to your organization
-8. Verify by asking: "What tables are in my database? Use MCP tools."
+1. Save and restart Cursor
+2. The MCP client will redirect you to log in to Supabase
+3. Grant access to your organization
+4. Verify by asking: "What tables are in my database? Use MCP tools."
 
 ### Available Tools
 
@@ -102,11 +103,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-Get these from: https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api
+Get these from: [https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api](https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api)
 
 ## Resources
 
-- Supabase MCP: https://supabase.com/mcp
-- Supabase MCP GitHub: https://github.com/supabase-community/supabase-mcp
-- Vercel MCP Handler: https://github.com/vercel/mcp-handler
-- MCP Documentation: https://modelcontextprotocol.io/
+- Supabase MCP: [https://supabase.com/mcp](https://supabase.com/mcp)
+- Supabase MCP GitHub: [https://github.com/supabase-community/supabase-mcp](https://github.com/supabase-community/supabase-mcp)
+- Vercel MCP Handler: [https://github.com/vercel/mcp-handler](https://github.com/vercel/mcp-handler)
+- MCP Documentation: [https://modelcontextprotocol.io/](https://modelcontextprotocol.io/)
+

@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MoreHorizontal, Play } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { SiNetflix } from "react-icons/si";
 import { SocialBrandIcon } from "@/components/home/social-brand";
+import { LivePlatformsMobile } from "@/components/home/live-platforms-mobile";
 import { HomeFloatingHeader } from "@/components/layout/home-floating-header";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { MobileFab } from "@/components/layout/mobile-fab";
@@ -54,69 +55,7 @@ export function MobileHome() {
           </div>
         </section>
 
-        <section className="mb-12 px-6">
-          <h3 className="mb-6 flex items-center gap-2 font-headline text-lg font-bold">
-            <span className="h-6 w-1.5 rounded-full bg-primary" />
-            Select Platform
-          </h3>
-          <div className="grid grid-cols-3 gap-4">
-            {(
-              [
-                {
-                  label: "Instagram",
-                  wrap: "bg-pink-50",
-                  icon: <SocialBrandIcon id="instagram" className="h-6 w-6 text-pink-500" />,
-                },
-                {
-                  label: "TikTok",
-                  wrap: "bg-blue-50",
-                  icon: <SocialBrandIcon id="tiktok" className="h-6 w-6 text-blue-600" />,
-                },
-                {
-                  label: "YouTube",
-                  wrap: "bg-red-50",
-                  icon: <SocialBrandIcon id="youtube" className="h-6 w-6 text-red-600" />,
-                },
-                {
-                  label: "Facebook",
-                  wrap: "bg-sky-50",
-                  icon: <SocialBrandIcon id="facebook" className="h-6 w-6 text-sky-600" />,
-                },
-                {
-                  label: "X / Twitter",
-                  wrap: "bg-slate-100",
-                  icon: <SocialBrandIcon id="x" className="h-6 w-6 text-slate-900" />,
-                },
-                {
-                  label: "More",
-                  wrap: "bg-surface-container",
-                  icon: (
-                    <MoreHorizontal
-                      className="h-6 w-6 text-on-surface-variant"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                  ),
-                },
-              ] as const
-            ).map((p) => (
-              <button
-                key={p.label}
-                type="button"
-                className="flex flex-col items-center gap-2 rounded-2xl bg-surface-container-lowest p-4 shadow-sm transition-transform active:scale-95"
-              >
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${p.wrap}`}
-                >
-                  {p.icon}
-                </div>
-                <span className="text-center text-[10px] font-bold text-on-surface-variant">
-                  {p.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
+        <LivePlatformsMobile />
 
         <section className="mb-12">
           <div className="mb-6 flex items-center justify-between px-6">
@@ -292,9 +231,6 @@ export function MobileHome() {
                   />
                 </div>
               ))}
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-surface-container-lowest bg-primary text-[10px] font-bold text-on-primary">
-                +50k
-              </div>
             </div>
             <h4 className="mb-2 font-headline text-xl font-bold">Trusted by 50,000+ Creators</h4>
             <p className="text-xs text-on-surface-variant">

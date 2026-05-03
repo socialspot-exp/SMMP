@@ -14,10 +14,10 @@ import { FaAmazon } from "react-icons/fa6";
 import { SiNetflix } from "react-icons/si";
 import { DynamicBoostWord } from "@/components/home/dynamic-boost-word";
 import {
-  PLATFORM_GRID,
   PLATFORM_PILLS,
   SocialBrandIcon,
 } from "@/components/home/social-brand";
+import { LivePlatformsSection } from "@/components/home/live-platforms-section";
 import { DesktopSiteFooter } from "@/components/layout/desktop-site-footer";
 import { HomeFloatingHeader } from "@/components/layout/home-floating-header";
 import { cn } from "@/lib/utils";
@@ -138,28 +138,7 @@ export function DesktopHome() {
           </div>
         </section>
 
-        <section className="bg-surface-container-low py-16">
-          <div className="mx-auto max-w-7xl px-6">
-            <p className="mb-10 text-center text-sm font-bold tracking-[0.2em] text-on-surface-variant uppercase">
-              Supported Platforms
-            </p>
-            <div className="grid grid-cols-4 gap-4 md:grid-cols-8 md:gap-8">
-              {PLATFORM_GRID.map((p) => (
-                <div key={p.label} className="group flex cursor-pointer flex-col items-center gap-2">
-                  <div
-                    className={`flex h-14 w-14 items-center justify-center rounded-lg bg-surface-container-lowest shadow-sm transition-all ${p.tileHover}`}
-                  >
-                    <SocialBrandIcon
-                      id={p.id}
-                      className={`h-7 w-7 text-on-surface-variant transition-colors ${p.iconHover}`}
-                    />
-                  </div>
-                  <span className="text-xs font-bold text-on-surface-variant">{p.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <LivePlatformsSection />
 
         <section className="bg-surface-container-lowest py-24">
           <div className="mx-auto max-w-7xl px-6">

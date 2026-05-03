@@ -68,6 +68,19 @@ function rowToForm(row: PremiumProductRow): FormState {
         ? String(row.icon_key)
         : "Sparkles"
       : "Sparkles";
+  
+  const topFeats = row.top_features?.length
+    ? row.top_features.map((x) => ({
+        icon_key: x.iconKey,
+        title: x.title,
+        description: x.description,
+      }))
+    : [];
+  
+  while (topFeats.length < 4) {
+    topFeats.push({ icon_key: "Sparkles", title: "", description: "" });
+  }
+  
   return {
     catalog_category_id: row.catalog_category_id ?? "",
     catalog_subcategory_id: row.catalog_subcategory_id ?? "",
@@ -86,14 +99,7 @@ function rowToForm(row: PremiumProductRow): FormState {
     checkout_field_label: row.checkout_field_label ?? "",
     is_active: row.is_active,
     faqs: row.faqs.length > 0 ? row.faqs.map((x) => ({ q: x.q, a: x.a })) : [],
-    top_features:
-      row.top_features?.length
-        ? row.top_features.map((x) => ({
-            icon_key: x.iconKey,
-            title: x.title,
-            description: x.description,
-          }))
-        : [],
+    top_features: topFeats,
     qty_tiers:
       row.quantity_options.length > 0
         ? row.quantity_options.map((x) => ({
@@ -137,7 +143,12 @@ const emptyFormStatic: FormState = {
   checkout_field_label: "",
   is_active: true,
   faqs: [],
-  top_features: [],
+  top_features: [
+    { icon_key: "Tv", title: "", description: "" },
+    { icon_key: "MonitorPlay", title: "", description: "" },
+    { icon_key: "Ban", title: "", description: "" },
+    { icon_key: "Zap", title: "", description: "" },
+  ],
   qty_tiers: [],
 };
 
@@ -271,8 +282,9 @@ export function AdminPremiumProductForm({
           description: x.description.trim(),
         }))
         .filter((x) => x.icon_key.length > 0 && x.title.length > 0 && x.description.length > 0);
-      if (topFeaturesPayload.length > 12) {
-        setError("Maximum 12 top features.");
+      
+      if (topFeaturesPayload.length < 4) {
+        setError("All 4 top features are required (icon, title, and description).");
         return;
       }
 
@@ -782,13 +794,13 @@ export function AdminPremiumProductForm({
 
         <section className="space-y-3 rounded-xl border border-outline-variant/10 bg-surface p-4">
           <p className="text-xs font-bold tracking-wide text-on-surface-variant uppercase">
-            Top Features
+            Top Features (4 Required)
           </p>
           <p className="text-xs text-on-surface-variant">
-            Add the icon, title, and short description that appear in the premium product “Top Features” section.
+            These 4 feature boxes appear on the premium product page. All fields are mandatory.
           </p>
           <div className="space-y-3">
-            {f.top_features.map((tf, i) => (
+            {f.top_features.slice(0, 4).map((tf, i) => (
               <div
                 key={i}
                 className="grid gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-low/30 p-3 sm:grid-cols-2"
@@ -846,6 +858,7 @@ export function AdminPremiumProductForm({
                       }));
                     }}
                     className={cn(fieldClass, "font-semibold")}
+                    placeholder="e.g. 4K Ultra HD streaming"
                   />
                 </div>
 
@@ -866,45 +879,13 @@ export function AdminPremiumProductForm({
                     }}
                     rows={3}
                     className={fieldClass}
-                    placeholder="e.g. Invite links arrive instantly after checkout."
+                    placeholder="e.g. Highest available resolution with HDR and Dolby Vision where the catalog supports it."
                   />
                 </div>
 
-                <div className="sm:col-span-2">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setF((prev) => ({
-                        ...prev,
-                        top_features: prev.top_features.filter((_, j) => j !== i),
-                      }))
-                    }
-                    className="inline-flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:text-red-600"
-                  >
-                    <Trash2 className="size-4 stroke-[1.75]" aria-hidden />
-                    Remove
-                  </button>
-                </div>
               </div>
             ))}
           </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              setF((prev) => ({
-                ...prev,
-                top_features: [
-                  ...prev.top_features,
-                  { icon_key: "Sparkles", title: "", description: "" },
-                ],
-              }))
-            }
-            className="inline-flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface"
-          >
-            <Plus className="size-4 stroke-[1.75]" aria-hidden />
-            Add top feature
-          </button>
         </section>
 
         <section className="space-y-3 rounded-xl border border-outline-variant/10 bg-surface p-4">

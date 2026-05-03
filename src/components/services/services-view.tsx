@@ -23,11 +23,9 @@ import {
   type SortKey,
   PREMIUM_BILLING,
   PREMIUM_CATEGORIES,
-  PREMIUM_SERVICES,
   SMM_CATEGORIES,
   SMM_DURATIONS,
   SMM_PLATFORMS,
-  SMM_SERVICES,
   SORT_OPTIONS,
 } from "@/lib/services-data";
 
@@ -341,7 +339,7 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
 
   const smmSorted = useMemo(() => sortSmm(smmFiltered, smmSort), [smmFiltered, smmSort]);
   const smmFeatured = useMemo(
-    () => smmFiltered.filter((s) => s.featured).slice(0, 4),
+    () => smmFiltered.filter((s) => s.featured),
     [smmFiltered]
   );
 
@@ -357,6 +355,10 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
     [premServices, premQ, premCategories, premSubcategory, premPriceMin, premPriceMax]
   );
   const premSorted = useMemo(() => sortPremium(premFiltered, premSort), [premFiltered, premSort]);
+  const premFeatured = useMemo(
+    () => premFiltered.filter((s) => s.featured),
+    [premFiltered]
+  );
 
   const smmPriceRangeValue = useMemo(() => {
     const min = smmPriceMin.trim();
@@ -398,10 +400,6 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
         break;
     }
   };
-  const premFeatured = useMemo(
-    () => premFiltered.filter((s) => s.featured).slice(0, 4),
-    [premFiltered]
-  );
 
   const toggleSmmPlatform = (id: string) => {
     setSmmPlatforms((prev) => {
@@ -474,29 +472,11 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
               <h2 className="font-headline text-2xl font-bold text-on-surface md:text-3xl">
                 SMM services
               </h2>
-              <p className="mt-1 text-sm text-on-surface-variant">
-                Followers, engagement, watch time — filter by platform, subcategory, delivery, and
-                budget.
-              </p>
             </div>
             <span className="text-xs font-semibold text-on-surface-variant">
               {smmSorted.length} results
             </span>
           </div>
-
-          {smmFeatured.length > 0 && (
-            <div className="mb-10">
-              <h3 className="mb-4 flex items-center gap-2 font-headline text-sm font-bold tracking-wide text-secondary uppercase">
-                <span className="h-4 w-1 rounded-full bg-secondary" />
-                Featured SMM
-              </h3>
-              <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
-                {smmFeatured.map((s) => (
-                  <SmmCard key={s.id} service={s} featuredLayout />
-                ))}
-              </div>
-            </div>
-          )}
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative max-w-md flex-1">
@@ -638,6 +618,33 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
               </Button>
             </aside>
 
+            {smmFeatured.length > 0 && (
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 font-headline text-sm font-bold tracking-wide text-secondary uppercase">
+                  <span className="h-4 w-1 rounded-full bg-secondary" />
+                  Featured SMM
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {smmFeatured.map((s) => (
+                    <SmmCard key={s.id} service={s} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {smmFeatured.length > 0 && smmSorted.length > 0 && (
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-outline-variant/20" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-surface-container-lowest px-3 text-xs font-semibold text-on-surface-variant">
+                    All SMM Services
+                  </span>
+                </div>
+              </div>
+            )}
+
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {smmSorted.map((s) => (
                 <SmmCard key={s.id} service={s} />
@@ -665,33 +672,11 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
               <h2 className="font-headline text-2xl font-bold text-on-surface md:text-3xl">
                 Premium account services
               </h2>
-              <p className="mt-1 text-sm text-on-surface-variant">
-                Streaming, music, tools — filter by category, subcategory (billing), and price.
-              </p>
             </div>
             <span className="text-xs font-semibold text-on-surface-variant">
               {premSorted.length} results
             </span>
           </div>
-
-          {premFeatured.length > 0 && (
-            <div className="mb-10">
-              <h3 className="mb-4 flex items-center gap-2 font-headline text-sm font-bold tracking-wide text-tertiary uppercase">
-                <span className="h-4 w-1 rounded-full bg-tertiary" />
-                Featured premium
-              </h3>
-              <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
-                {premFeatured.map((s) => (
-                  <PremiumCard
-                    key={s.id}
-                    service={s}
-                    featuredLayout
-                    catalog={premCatalogCategories}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative max-w-md flex-1">
@@ -826,6 +811,33 @@ function ServicesViewInner({ variant = "full" }: { variant?: ServicesViewVariant
                 Apply
               </Button>
             </aside>
+
+            {premFeatured.length > 0 && (
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 font-headline text-sm font-bold tracking-wide text-tertiary uppercase">
+                  <span className="h-4 w-1 rounded-full bg-tertiary" />
+                  Featured Premium
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {premFeatured.map((s) => (
+                    <PremiumCard key={s.id} service={s} catalog={premCatalogCategories} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {premFeatured.length > 0 && premSorted.length > 0 && (
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-outline-variant/20" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-surface-container-lowest px-3 text-xs font-semibold text-on-surface-variant">
+                    All Premium Services
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {premSorted.map((s) => (
